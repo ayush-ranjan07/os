@@ -1,0 +1,93 @@
+#include <stdio.h>
+
+void priorityScheduling(int n, int arrivalTime[], int burstTime[], int priority[]) {
+    int completionTime[n];
+    int turnaroundTime[n];
+    int waitingTime[n];
+    int remainingTime[n];
+
+    for (int i = 0; i < n; i++) {
+        remainingTime[i] = burstTime[i];
+    }
+
+    int currentTime = 0;
+    int completedProcesses = 0;
+
+    // Priority Scheduling
+    while (completedProcesses < n) {
+        int highestPriority = -1; // Index of the process with the highest priority
+
+        // Find the process with the highest priority and has arrived
+        for (int i = 0; i < n; i++) {
+            if (arrivalTime[i] <= currentTime && remainingTime[i] > 0 && priority[i] > highestPriority) {
+                highestPriority = priority[i];
+            }
+        }
+
+        // If no valid process is found, move to the next time unit
+        if (highestPriority == -1) {
+            currentTime++;
+        } else {
+            // Find the process with the highest priority among the arrived processes
+            for (int i = 0; i < n; i++) {
+                if (arrivalTime[i] <= currentTime && remainingTime[i] > 0 && priority[i] == highestPriority) {
+                    // Execute the process
+                    completionTime[i] = currentTime + burstTime[i];
+                    turnaroundTime[i] = completionTime[i] - arrivalTime[i];
+                    waitingTime[i] = turnaroundTime[i] - burstTime[i];
+
+                    // Update tracking variables
+                    currentTime = completionTime[i];
+                    remainingTime[i] = 0;
+                    completedProcesses++;
+
+                    // Break the loop after executing one process in this time unit
+                    break;
+                }
+            }
+        }
+    }
+
+    // Display process details and scheduling results for Priority Scheduling
+    printf("\nPriority Scheduling:\n");
+    printf("Process\t Arrival Time\t Burst Time\t Priority\t Completion Time\t Turnaround Time\t Waiting Time\n");
+    float avgTurnaroundTime = 0, avgWaitingTime = 0;
+    for (int i = 0; i < n; i++) {
+        printf("%d\t\t %d\t\t\t %d\t\t %d\t\t %d\t\t\t %d\t\t\t %d\n", i + 1, arrivalTime[i], burstTime[i],
+               priority[i], completionTime[i], turnaroundTime[i], waitingTime[i]);
+        avgTurnaroundTime += turnaroundTime[i];
+        avgWaitingTime += waitingTime[i];
+    }
+
+    avgTurnaroundTime /= n;
+    avgWaitingTime /= n;
+
+    printf("\nAverage Turnaround Time: %.2f", avgTurnaroundTime);
+    printf("\nAverage Waiting Time: %.2f\n", avgWaitingTime);
+}
+
+int main() {
+    int n;
+
+    printf("Enter the number of processes: ");
+    scanf("%d", &n);
+
+    int arrivalTime[n];
+    int burstTime[n];
+    int priority[n];
+
+    // Input process details
+    for (int i = 0; i < n; i++) {
+        printf("Enter arrival time for Process %d: ", i + 1);
+        scanf("%d", &arrivalTime[i]);
+        printf("Enter burst time for Process %d: ", i + 1);
+        scanf("%d", &burstTime[i]);
+        printf("Enter priority for Process %d: ", i + 1);
+        scanf("%d", &priority[i]);
+    }
+
+    // Perform Priority Scheduling
+    priorityScheduling(n, arrivalTime, burstTime, priority);
+
+    return 0;
+}

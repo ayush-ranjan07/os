@@ -1,0 +1,88 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_PAGES 100
+#define MAX_FRAMES 10
+
+typedef struct {
+    int page_number;
+    int last_used;
+} Page;
+
+void initialize(Page frames[], int n) {
+    for (int i = 0; i < n; i++) {
+        frames[i].page_number = -1;
+        frames[i].last_used = 0;
+    }
+}
+
+int findLRU(Page frames[], int n) {
+    int min = frames[0].last_used;
+    int index = 0;
+    for (int i = 1; i < n; i++) {
+        if (frames[i].last_used < min) {
+            min = frames[i].last_used;
+            index = i;
+        }
+    }
+    return index;
+}
+
+void display(Page frames[], int n) {
+    for (int i = 0; i < n; i++) {
+        if (frames[i].page_number != -1) {
+            printf("%d ", frames[i].page_number);
+        } else {
+            printf("- ");
+        }
+    }
+    printf("\n");
+}
+
+int main() {
+    int reference_string[MAX_PAGES];
+    int num_pages, num_frames;
+
+    printf("Enter the number of pages: ");
+    scanf("%d", &num_pages);
+
+    printf("Enter the reference string:\n");
+    for (int i = 0; i < num_pages; i++) {
+        scanf("%d", &reference_string[i]);
+    }
+
+    printf("Enter the number of frames: ");
+    scanf("%d", &num_frames);
+
+    Page frames[MAX_FRAMES];
+    initialize(frames, num_frames);
+
+    int page_faults = 0;
+
+    for (int i = 0; i < num_pages; i++) {
+        int page_number = reference_string[i];
+
+        int found = 0;
+        for (int j = 0; j < num_frames; j++) {
+            if (frames[j].page_number == page_number) {
+                frames[j].last_used = i + 1;
+                found = 1;
+                break;
+            }
+        }
+
+        if (!found) {
+            int index = findLRU(frames, num_frames);
+            frames[index].page_number = page_number;
+            frames[index].last_used = i + 1;
+            page_faults++;
+
+            printf("Page fault at step %d: ", i + 1);
+            display(frames, num_frames);
+        }
+    }
+
+    printf("Total Page Faults: %d\n", page_faults);
+
+    return 0;
+}

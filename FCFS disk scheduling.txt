@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_REQUESTS 100
+
+void calculateSeekTime(int request_sequence[], int num_requests, int initial_position) {
+    int total_seek_time = 0;
+    int current_position = initial_position;
+
+    for (int i = 0; i < num_requests; i++) {
+        int distance = abs(request_sequence[i] - current_position);
+        total_seek_time += distance;
+        current_position = request_sequence[i];
+
+        printf("Move from %d to %d with seek distance %d\n", current_position - distance, current_position, distance);
+    }
+
+    printf("Total Seek Time: %d\n", total_seek_time);
+}
+
+int main() {
+    int request_sequence[MAX_REQUESTS];
+    int num_requests, initial_position;
+
+    printf("Enter the number of disk requests: ");
+    scanf("%d", &num_requests);
+
+    printf("Enter the disk request sequence:\n");
+    for (int i = 0; i < num_requests; i++) {
+        scanf("%d", &request_sequence[i]);
+    }
+
+    printf("Enter the initial head position: ");
+    scanf("%d", &initial_position);
+
+    calculateSeekTime(request_sequence, num_requests, initial_position);
+
+    return 0;
+}

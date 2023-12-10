@@ -1,0 +1,18 @@
+#include <stdio.h>
+#include <sys/types.h>
+int main(){
+    if (fork() == 0) 
+        printf("Hello from Child!\n"); 
+    fork();
+    fork();
+    fork();
+    printf("Hello World");
+    return 0;
+}
+
+
+
+
+// Negative Value: the creation of a child process was unsuccessful.
+// Zero: Returned to the newly created child process.
+// Positive value: Returned to parent or caller. The value contains the process ID of a newly created child process.
